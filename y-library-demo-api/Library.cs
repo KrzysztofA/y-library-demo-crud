@@ -1,5 +1,6 @@
 namespace Yasuzume.CrudApp;
 
+using BCrypt.Net;
 using DotNetEnv;
 using Npgsql;
 using System.Collections.Generic;
@@ -8,6 +9,33 @@ public class Library
 {
   public List<List<string>> BookStrings { get; private set; } = new();
   public List<List<string>> InventoryStrings { get; private set; } = new();
+
+  public string ConnectionString => $"Host={Environment.GetEnvironmentVariable( "DATABASE_HOST" )};Username={Environment.GetEnvironmentVariable( "USERNAME" )};Password={Environment.GetEnvironmentVariable( "DATABASE_PASSWORD" )};Database=LibraryDatabase";
+
+  public async Task<bool> CheckUserPassword( string username, string password )
+  {
+    string hashedPassword = BCrypt.HashPassword(password);
+
+    var connectionString = ConnectionString;
+    await using var dataSource = NpgsqlDataSource.Create(connectionString);
+    await using var connection = await dataSource.OpenConnectionAsync();
+    await using var cmd = new NpgsqlCommand($"""SELECT "Users"."PasswordHash" FROM "public"."Users" WHERE "Users"."Username"={username};""", connection);
+    await using var reader = await cmd.ExecuteReaderAsync();
+    reader.Read();
+    var passwordIsCorrect = reader.GetString(0) == hashedPassword;
+    return passwordIsCorrect;
+  }
+
+  public async Task<bool> AddUser( string username, string password )
+  {
+    var connectionString = ConnectionString;
+    await using var dataSource = NpgsqlDataSource.Create(connectionString);
+    await using var connection = await dataSource.OpenConnectionAsync();
+    string hashedPassword = BCrypt.HashPassword(password);
+    string commandString = $"INSERT INTO \"public\".\"Users\" ( \"Username\", \"PasswordHash\" ) VALUES ( '{username}', '{hashedPassword}' );";
+    await using var cmd = new NpgsqlCommand( commandString, connection).ExecuteReader();
+    return true;
+  }
 
   public Library()
   {
@@ -24,10 +52,10 @@ public class Library
     // Select * from Books For JSON, create books list from JSON
     await using var cmd = new NpgsqlCommand("SELECT * FROM \"public\".\"Books\";", connection);
     await using var reader = await cmd.ExecuteReaderAsync();
-    while ( reader.Read() )
+    while (reader.Read())
     {
       var tempRow = new List<string>();
-      for ( var i = 0; i < 10; i++ ) tempRow.Add( i == 8 ? $"{reader.GetDateTime( i ).ToShortDateString()}" : $"{reader.GetString( i ).Replace( ",", "%2C" )}" );
+      for (var i = 0; i < 10; i++) tempRow.Add( i == 8 ? $"{reader.GetDateTime( i ).ToShortDateString()}" : $"{reader.GetString( i ).Replace( ",", "%2C" )}" );
       BookStrings.Add( tempRow );
     }
     await reader.CloseAsync();
@@ -60,10 +88,10 @@ public class Library
     await using var reader = await cmd.ExecuteReaderAsync();
 
     var books = new List<List<string>>();
-    while ( reader.Read() )
+    while (reader.Read())
     {
       var tempRow = new List<string>();
-      for ( var i = 0; i < 2; i++ ) tempRow.Add( $"{reader.GetString( i ).Replace( ",", "%2C" )}" );
+      for (var i = 0; i < 2; i++) tempRow.Add( $"{reader.GetString( i ).Replace( ",", "%2C" )}" );
       books.Add( tempRow );
     }
     await reader.CloseAsync();
@@ -80,10 +108,10 @@ public class Library
     // Select * from Books For JSON, create books list from JSON
     await using var cmd = new NpgsqlCommand("SELECT \"public\".\"Inventory\".\"AvailableCopies\", \"public\".\"Inventory\".\"AvailableFormats\", \"public\".\"Inventory\".\"ISBN\", \"public\".\"Books\".\"Name\" FROM \"public\".\"Inventory\" INNER JOIN \"public\".\"Books\" USING(\"ISBN\");", connection);
     await using var reader = await cmd.ExecuteReaderAsync();
-    while ( reader.Read() )
+    while (reader.Read())
     {
       var tempRow = new List<string>();
-      for ( var i = 0; i < 4; i++ ) tempRow.Add( i == 0 ? $"{reader.GetInt32( i )}" : $"{reader.GetString( i ).Replace( ",", "%2C" )}" );
+      for (var i = 0; i < 4; i++) tempRow.Add( i == 0 ? $"{reader.GetInt32( i )}" : $"{reader.GetString( i ).Replace( ",", "%2C" )}" );
       InventoryStrings.Add( tempRow );
     }
     await reader.CloseAsync();
