@@ -6,11 +6,7 @@ import {
   AlertDialogHeader,
   AlertDialogOverlay,
   Button,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
   NumberInput,
-  NumberInputField,
-  NumberInputStepper,
   Td,
   Tr,
   useDisclosure,
@@ -34,7 +30,7 @@ const BookInventoryField = ({
     { value: 3, label: "Soft Cover" },
   ];
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { open, onOpen, onClose } = useDisclosure();
   const cancelRef = createRef<HTMLButtonElement>();
 
   const formatsRef = useRef<({ value: number; label: string } | null)[]>(
@@ -122,17 +118,18 @@ const BookInventoryField = ({
       <Td>{book.getISBN()}</Td>
       <Td>{book.getTitle()}</Td>
       <Td>
-        <NumberInput
+        <NumberInput.Root
           defaultValue={countRef.current}
           min={0}
-          onChange={(ev) => (countRef.current = parseInt(ev))}
+          onChange={(ev: any) => (countRef.current = parseInt(ev))}
         >
-          <NumberInputField />
-          <NumberInputStepper>
-            <NumberIncrementStepper />
-            <NumberDecrementStepper />
-          </NumberInputStepper>
-        </NumberInput>
+          <NumberInput.Label />
+          <NumberInput.ValueText />
+          <NumberInput.Control>
+            <NumberInput.IncrementTrigger />
+            <NumberInput.DecrementTrigger />
+          </NumberInput.Control>
+        </NumberInput.Root>
       </Td>
       <Td width={"20%"}>
         <Select
@@ -166,7 +163,7 @@ const BookInventoryField = ({
           Remove
         </Button>
         <AlertDialog
-          isOpen={isOpen}
+          isOpen={open}
           leastDestructiveRef={cancelRef}
           onClose={onClose}
         >

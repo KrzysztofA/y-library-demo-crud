@@ -2,47 +2,53 @@ import "./App.css";
 import Catalogue from "./components/Catalogue";
 import Inventory from "./components/Inventory";
 import AddOrUpdateBook from "./components/AddOrUpdateBook";
-import {
-  Button,
-  ChakraProvider,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Button, ChakraProvider, Tabs, useDisclosure } from "@chakra-ui/react";
 import useAuthentication from "./hooks/useAuthentication";
 import Login from "./components/Login/Login";
+import AuthenticationContext from "./context/AuthenticationContext";
+import { SetStateAction, useState } from "react";
+import { Provider } from "./components/ui/provider";
 
 const App = () => {
   const { isAuthenticated, authenticate, logout } = useAuthentication();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { open, onOpen, onClose } = useDisclosure();
+  const [value, setValue] = useState<string | null>("first");
+
+  const logoutWithTabChange = () => {
+    setValue(() => "first");
+    logout();
+  };
 
   return (
-    <ChakraProvider>
-      <Login isOpen={isOpen} onClose={onClose} authenticate={authenticate} />
-      <Tabs>
-        <TabList>
-          <Tab>Catalogue</Tab>
-          {!isAuthenticated && <Button onClick={() => onOpen()}>Login</Button>}
-          {isAuthenticated && <Tab>Inventory</Tab>}
-          {isAuthenticated && <Tab>Add/Update</Tab>}
-          {isAuthenticated && <Button onClick={() => logout()}>Logout</Button>}
-        </TabList>
-        <TabPanels>
-          <TabPanel>
+    <Provider>
+      <AuthenticationContext.Provider
+        value={{ isAuthenticated, authenticate, logout: logoutWithTabChange }}
+      >
+        <Login isOpen={open} onClose={onClose} authenticate={authenticate} />
+        <Tabs.Root value={value} onChange={(ev: any) => setValue(ev)}>
+          <Tabs.List>
+            <Tabs.Trigger>Catalogue</Tabs.Trigger>
+            {!isAuthenticated && (
+              <Button onClick={() => onOpen()}>Login</Button>
+            )}
+            {isAuthenticated && <Tabs.Trigger>Inventory</Tabs.Trigger>}
+            {isAuthenticated && <Tabs.Trigger>Add/Update</Tabs.Trigger>}
+            {isAuthenticated && (
+              <Button onClick={() => logout()}>Logout</Button>
+            )}
+          </Tabs.List>
+          <Tabs.Content>
             <Catalogue />
-          </TabPanel>
-          <TabPanel>
+          </Tabs.Content>
+          <Tabs.Content>
             <Inventory />
-          </TabPanel>
-          <TabPanel>
+          </Tabs.Content>
+          <Tabs.Content>
             <AddOrUpdateBook />
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
-    </ChakraProvider>
+          </Tabs.Content>
+        </Tabs.Root>
+      </AuthenticationContext.Provider>
+    </Provider>
   );
 };
 

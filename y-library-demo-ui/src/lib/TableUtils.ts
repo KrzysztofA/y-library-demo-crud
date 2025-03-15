@@ -5,7 +5,7 @@ const fromTable = (tableString: string): string => {
 const fromTableURL = (tableString: string): string => {
   return tableString
     .replaceAll("%2C", ",")
-    .replaceAll("&quot", '"')
+    .replaceAll("&quot;", '"')
     .replaceAll("&apos;", "'");
 };
 

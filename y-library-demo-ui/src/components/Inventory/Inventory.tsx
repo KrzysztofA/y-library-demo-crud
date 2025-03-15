@@ -3,18 +3,7 @@ import useFetch from "../../hooks/useFetch";
 import BookInventory from "../../lib/BookInventory";
 import BookInventoryField from "../BookInventoryField";
 
-import {
-  Table,
-  TableContainer,
-  Tbody,
-  Th,
-  Thead,
-  Tr,
-  Text,
-  Button,
-  Center,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Table, Button, Center, useDisclosure, Text } from "@chakra-ui/react";
 import InventoryDrawer from "./InventoryDrawer";
 
 const Inventory = () => {
@@ -22,7 +11,7 @@ const Inventory = () => {
   const [unableToFetch, setUnableToFetch] = useState<boolean>(false);
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { open, onOpen, onClose } = useDisclosure();
   const btnRef = createRef<HTMLButtonElement>();
 
   const handleFetch = useFetch("https://localhost:7133/", "inventory");
@@ -89,32 +78,34 @@ const Inventory = () => {
     <>
       {unableToFetch ? (
         <Text color="red">
-          Error connecting to the database, see console for more info.
+          Error connecting to the database, check console for more info.
         </Text>
       ) : books != null ? (
-        <TableContainer style={{ overflow: "visible" }}>
-          <Table variant={"striped"}>
-            <Thead>
-              <Tr>
-                <Th scope="col">ISBN</Th>
-                <Th scope="col">Name</Th>
-                <Th scope="col">Available Count</Th>
-                <Th scope="col">Available Formats</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {books?.map((book, index) => (
-                <BookInventoryField
-                  key={"inventorybook" + index}
-                  book={book}
-                  removeBook={removeBook}
-                />
-              ))}
-            </Tbody>
-          </Table>
-        </TableContainer>
+        <Table.Root striped>
+          <Table.Header>
+            <Table.Row>
+              <Table.ColumnHeader scope="col">ISBN</Table.ColumnHeader>
+              <Table.ColumnHeader scope="col">Name</Table.ColumnHeader>
+              <Table.ColumnHeader scope="col">
+                Available Count
+              </Table.ColumnHeader>
+              <Table.ColumnHeader scope="col">
+                Available Formats
+              </Table.ColumnHeader>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {books?.map((book, index) => (
+              <BookInventoryField
+                key={"inventorybook" + index}
+                book={book}
+                removeBook={removeBook}
+              />
+            ))}
+          </Table.Body>
+        </Table.Root>
       ) : (
-        <Text size={"lg"}>Nothing Here!</Text>
+        <Text fontSize={"lg"}>Nothing Here!</Text>
       )}
       <Center marginTop={10}>
         <Button
@@ -127,7 +118,7 @@ const Inventory = () => {
         </Button>
         <InventoryDrawer
           onClose={onClose}
-          isOpen={isOpen}
+          isOpen={open}
           btnRef={btnRef}
           addBook={addBook}
         />

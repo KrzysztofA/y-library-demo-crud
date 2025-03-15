@@ -1,15 +1,4 @@
-import {
-  Button,
-  Drawer,
-  DrawerBody,
-  DrawerCloseButton,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerOverlay,
-  Flex,
-  Text,
-} from "@chakra-ui/react";
+import { Button, Drawer, Flex, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import useFetch from "../../hooks/useFetch";
 import { fromTableURL } from "../../lib/TableUtils";
@@ -93,58 +82,60 @@ const InventoryDrawer = ({
   }, [availableBooks, handleFetch, isFetching, isOpen, unableToFetch]);
 
   return (
-    <Drawer
+    <Drawer.Root
       isOpen={isOpen}
-      placement="right"
+      placement="end"
       onClose={onClose}
       finalFocusRef={btnRef}
     >
-      <DrawerOverlay />
-      <DrawerContent>
-        <DrawerCloseButton />
-        <DrawerHeader>
-          Select book from available ISBN (and/or titles)
-        </DrawerHeader>
+      <Drawer.Backdrop />
+      <Drawer.Positioner>
+        <Drawer.Content>
+          <Drawer.Trigger />
+          <Drawer.Header>
+            Select book from available ISBN (and/or titles)
+          </Drawer.Header>
 
-        <DrawerBody>
-          <Flex flexDir={"column"}>
-            {availableBooks !== null ? (
-              availableBooks?.map((book: { isbn: string; name: string }) => {
-                return (
-                  <Button
-                    key={`${book.isbn}button`}
-                    justifyContent={"stretch"}
-                    fontSize={"0.6rem"}
-                    onClick={() => {
-                      if (
-                        addBook(
-                          new BookInventory(book.isbn, 0, book.name, "000")
+          <Drawer.Body>
+            <Flex flexDir={"column"}>
+              {availableBooks !== null ? (
+                availableBooks?.map((book: { isbn: string; name: string }) => {
+                  return (
+                    <Button
+                      key={`${book.isbn}button`}
+                      justifyContent={"stretch"}
+                      fontSize={"0.6rem"}
+                      onClick={() => {
+                        if (
+                          addBook(
+                            new BookInventory(book.isbn, 0, book.name, "000")
+                          )
                         )
-                      )
-                        postBook(book.isbn);
-                    }}
-                  >
-                    <span style={{ textAlign: "left" }}>{book.isbn}</span>
-                    <span style={{ textAlign: "center", margin: "auto" }}>
-                      -
-                    </span>
-                    <span style={{ textAlign: "right" }}>{book.name}</span>
-                  </Button>
-                );
-              })
-            ) : (
-              <Text color="red">No books Available</Text>
-            )}
-          </Flex>
-        </DrawerBody>
+                          postBook(book.isbn);
+                      }}
+                    >
+                      <span style={{ textAlign: "left" }}>{book.isbn}</span>
+                      <span style={{ textAlign: "center", margin: "auto" }}>
+                        -
+                      </span>
+                      <span style={{ textAlign: "right" }}>{book.name}</span>
+                    </Button>
+                  );
+                })
+              ) : (
+                <Text color="red">No books Available</Text>
+              )}
+            </Flex>
+          </Drawer.Body>
 
-        <DrawerFooter>
-          <Button variant="outline" mr={3} onClick={onClose}>
-            Cancel
-          </Button>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
+          <Drawer.Footer>
+            <Button variant="outline" mr={3} onClick={onClose}>
+              Cancel
+            </Button>
+          </Drawer.Footer>
+        </Drawer.Content>
+      </Drawer.Positioner>
+    </Drawer.Root>
   );
 };
 
