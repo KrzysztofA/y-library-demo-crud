@@ -15,18 +15,25 @@ import {
 import useAuthentication from "./hooks/useAuthentication";
 import Login from "./components/Login/Login";
 import AuthenticationContext from "./components/Context/AuthenticationContext";
+import { useState } from "react";
 
 const App = () => {
   const { isAuthenticated, authenticate, logout } = useAuthentication();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [tabIndex, setTabIndex] = useState(0);
+
+  const logoutWithTabsChange = () => {
+    logout();
+    setTabIndex(() => 0);
+  };
 
   return (
     <ChakraProvider>
       <AuthenticationContext.Provider
-        value={{ isAuthenticated, authenticate, logout }}
+        value={{ isAuthenticated, authenticate, logout: logoutWithTabsChange }}
       >
         <Login isOpen={isOpen} onClose={onClose} authenticate={authenticate} />
-        <Tabs>
+        <Tabs onChange={(index) => setTabIndex(index)} index={tabIndex}>
           <TabList>
             <Tab>Catalogue</Tab>
             {!isAuthenticated && (
@@ -35,7 +42,7 @@ const App = () => {
             {isAuthenticated && <Tab>Inventory</Tab>}
             {isAuthenticated && <Tab>Add/Update</Tab>}
             {isAuthenticated && (
-              <Button onClick={() => logout()}>Logout</Button>
+              <Button onClick={() => logoutWithTabsChange()}>Logout</Button>
             )}
           </TabList>
           <TabPanels>
