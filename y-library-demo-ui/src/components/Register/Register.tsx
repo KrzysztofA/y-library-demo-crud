@@ -11,15 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { useRef } from "react";
 
-const Login = ({
-  isOpen,
-  onClose,
-  authenticate,
-}: {
-  isOpen: boolean;
-  onClose: any;
-  authenticate: any;
-}) => {
+const Login = ({ isOpen, onClose }: { isOpen: boolean; onClose: any }) => {
   const usernameRef = useRef<string>("");
   const passwordRef = useRef<string>("");
 
@@ -31,17 +23,13 @@ const Login = ({
     passwordRef.current = e.target.value;
   };
 
-  const login = (username: string, password: string) => {
-    if (authenticate(username, password)) {
-      onClose();
-    }
-  };
+  const register = (username: string, password: string) => {};
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered>
+    <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Login</ModalHeader>
+        <ModalHeader>Register</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Input placeholder="Username" onChange={handleUsernameChange} />
@@ -55,9 +43,9 @@ const Login = ({
           <Button
             colorScheme="blue"
             mr={3}
-            onClick={() => login(usernameRef.current, passwordRef.current)}
+            onClick={() => register(usernameRef.current, passwordRef.current)}
           >
-            Login
+            Register
           </Button>
           <Button onClick={onClose}>Cancel</Button>
         </ModalFooter>

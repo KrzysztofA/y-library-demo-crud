@@ -1,7 +1,9 @@
 import { useState } from "react";
+import useFetch from "./useFetch";
 
 const useAuthentication = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const handleFetch = useFetch("https://localhost:7133/", "user");
 
   const authenticate = (username: string, password: string) => {
     if (username === "admin" && password === "admin") {
