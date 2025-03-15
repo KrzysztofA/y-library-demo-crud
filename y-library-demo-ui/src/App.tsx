@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import useAuthentication from "./hooks/useAuthentication";
 import Login from "./components/Login/Login";
+import AuthenticationContext from "./components/Context/AuthenticationContext";
 
 const App = () => {
   const { isAuthenticated, authenticate, logout } = useAuthentication();
@@ -21,27 +22,35 @@ const App = () => {
 
   return (
     <ChakraProvider>
-      <Login isOpen={isOpen} onClose={onClose} authenticate={authenticate} />
-      <Tabs>
-        <TabList>
-          <Tab>Catalogue</Tab>
-          {!isAuthenticated && <Button onClick={() => onOpen()}>Login</Button>}
-          {isAuthenticated && <Tab>Inventory</Tab>}
-          {isAuthenticated && <Tab>Add/Update</Tab>}
-          {isAuthenticated && <Button onClick={() => logout()}>Logout</Button>}
-        </TabList>
-        <TabPanels>
-          <TabPanel>
-            <Catalogue />
-          </TabPanel>
-          <TabPanel>
-            <Inventory />
-          </TabPanel>
-          <TabPanel>
-            <AddOrUpdateBook />
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+      <AuthenticationContext.Provider
+        value={{ isAuthenticated, authenticate, logout }}
+      >
+        <Login isOpen={isOpen} onClose={onClose} authenticate={authenticate} />
+        <Tabs>
+          <TabList>
+            <Tab>Catalogue</Tab>
+            {!isAuthenticated && (
+              <Button onClick={() => onOpen()}>Login</Button>
+            )}
+            {isAuthenticated && <Tab>Inventory</Tab>}
+            {isAuthenticated && <Tab>Add/Update</Tab>}
+            {isAuthenticated && (
+              <Button onClick={() => logout()}>Logout</Button>
+            )}
+          </TabList>
+          <TabPanels>
+            <TabPanel>
+              <Catalogue />
+            </TabPanel>
+            <TabPanel>
+              <Inventory />
+            </TabPanel>
+            <TabPanel>
+              <AddOrUpdateBook />
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </AuthenticationContext.Provider>
     </ChakraProvider>
   );
 };
