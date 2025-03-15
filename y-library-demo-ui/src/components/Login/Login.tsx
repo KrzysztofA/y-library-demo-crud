@@ -9,6 +9,7 @@ import {
   ModalHeader,
   ModalOverlay,
 } from "@chakra-ui/react";
+import { useRef } from "react";
 
 const Login = ({
   isOpen,
@@ -19,12 +20,15 @@ const Login = ({
   onClose: any;
   authenticate: any;
 }) => {
+  const usernameRef = useRef<string>("");
+  const passwordRef = useRef<string>("");
+
   const handleUsernameChange = (e: any) => {
-    console.log(e.target.value);
+    usernameRef.current = e.target.value;
   };
 
   const handlePasswordChange = (e: any) => {
-    console.log(e.target.value);
+    passwordRef.current = e.target.value;
   };
 
   const login = (username: string, password: string) => {
@@ -51,7 +55,7 @@ const Login = ({
           <Button
             colorScheme="blue"
             mr={3}
-            onClick={() => login("admin", "admin")}
+            onClick={() => login(usernameRef.current, passwordRef.current)}
           >
             Login
           </Button>

@@ -1,4 +1,4 @@
-import { FormEvent, useRef } from "react";
+import { FormEvent, useContext, useRef } from "react";
 
 import {
   Button,
@@ -12,8 +12,11 @@ import {
 } from "@chakra-ui/react";
 import useFetch from "../../hooks/useFetch";
 import { toTable } from "../../lib/TableUtils";
+import AuthenticationContext from "../Context/AuthenticationContext";
 
 const BookForm = () => {
+  const { isAuthenticated } = useContext(AuthenticationContext);
+
   const nameRef = useRef<string | null>(null);
   const authorRef = useRef<string | null>(null);
   const isbnRef = useRef<string | null>(null);
@@ -27,6 +30,7 @@ const BookForm = () => {
   const handleFetchUpdate = useFetch("https://localhost:7133/", "database");
 
   const onSubmit = (ev: FormEvent) => {
+    if (!isAuthenticated) throw new Error("Not authenticated");
     ev.preventDefault();
     const day = dateRef.current?.getDay();
     const month = dateRef.current?.getMonth();
