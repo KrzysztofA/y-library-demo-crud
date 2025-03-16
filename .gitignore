@@ -58,3 +58,4 @@ y-library-demo-api/.vs/ProjectEvaluation/y-library-demo-api.projects.v8.bin
 y-library-demo-api/.vs/ProjectEvaluation/y-library-demo-api.strings.v8.bin
 y-library-demo-api/.vs/y-library-demo-api/config/applicationhost.config
 y-library-demo-api/.vs/y-library-demo-api/DesignTimeBuild/.dtbcache.v2
+*.vsidx

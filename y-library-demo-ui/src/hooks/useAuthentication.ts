@@ -5,7 +5,7 @@ const useAuthentication = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const handleFetch = useFetch("https://localhost:7133/", "user");
 
-  const authenticate = (username: string, password: string) => {
+  const authenticate = (username: string, password: string): boolean => {
     if (username === "admin" && password === "admin") {
       setIsAuthenticated(() => true);
       return true;

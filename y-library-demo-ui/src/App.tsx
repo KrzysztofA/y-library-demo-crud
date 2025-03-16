@@ -16,10 +16,16 @@ import useAuthentication from "./hooks/useAuthentication";
 import Login from "./components/Login/Login";
 import AuthenticationContext from "./components/Context/AuthenticationContext";
 import { useState } from "react";
+import Register from "./components/Register/Register";
 
 const App = () => {
   const { isAuthenticated, authenticate, logout } = useAuthentication();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isRegisterOpen,
+    onOpen: onRegisterOpen,
+    onClose: onRegisterClose,
+  } = useDisclosure();
   const [tabIndex, setTabIndex] = useState(0);
 
   const logoutWithTabsChange = () => {
@@ -32,12 +38,24 @@ const App = () => {
       <AuthenticationContext.Provider
         value={{ isAuthenticated, authenticate, logout: logoutWithTabsChange }}
       >
-        <Login isOpen={isOpen} onClose={onClose} authenticate={authenticate} />
+        {!isAuthenticated && (
+          <Register isOpen={isRegisterOpen} onClose={onRegisterClose} />
+        )}
+        {!isAuthenticated && (
+          <Login
+            isOpen={isOpen}
+            onClose={onClose}
+            authenticate={authenticate}
+          />
+        )}
         <Tabs onChange={(index) => setTabIndex(index)} index={tabIndex}>
           <TabList>
             <Tab>Catalogue</Tab>
             {!isAuthenticated && (
               <Button onClick={() => onOpen()}>Login</Button>
+            )}
+            {!isAuthenticated && (
+              <Button onClick={() => onRegisterOpen()}>Register</Button>
             )}
             {isAuthenticated && <Tab>Inventory</Tab>}
             {isAuthenticated && <Tab>Add/Update</Tab>}
