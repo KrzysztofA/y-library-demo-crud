@@ -1,18 +1,42 @@
 import useFetch from "./useFetch";
 
 const useRegistration = () => {
-  const handleFetch = useFetch("https://localhost:7133/", "user");
+  const handleFetch = useFetch("https://localhost:7133/", "user/new");
 
-  const register = (
+  const addUser = async (
     email: string,
     username: string,
     password: string
-  ): boolean => {
-    console.log(email, username, password);
-    return true;
+  ): Promise<boolean> => {
+    const queryObj = {
+      email: `${email}`,
+      username: `${username}`,
+      password: `${password}`,
+    };
+
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(queryObj),
+    };
+
+    let success = false;
+
+    await handleFetch(undefined, options)
+      .then((res) => {
+        console.log(res);
+        if (!res.ok) throw new Error(res.statusText);
+        else success = true;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    return success;
   };
 
-  return register;
+  return addUser;
 };
 
 export default useRegistration;

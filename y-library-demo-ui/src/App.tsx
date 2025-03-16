@@ -48,14 +48,31 @@ const App = () => {
             authenticate={authenticate}
           />
         )}
-        <Tabs onChange={(index) => setTabIndex(index)} index={tabIndex}>
+        <Tabs
+          onChange={(index) => setTabIndex(index)}
+          index={tabIndex}
+          gap="10px"
+        >
           <TabList>
             <Tab>Catalogue</Tab>
             {!isAuthenticated && (
-              <Button onClick={() => onOpen()}>Login</Button>
+              <Button
+                onClick={() => onOpen()}
+                variant={"link"}
+                paddingLeft={10}
+                paddingRight={5}
+              >
+                Login
+              </Button>
             )}
             {!isAuthenticated && (
-              <Button onClick={() => onRegisterOpen()}>Register</Button>
+              <Button
+                onClick={() => onRegisterOpen()}
+                variant={"link"}
+                paddingInline={5}
+              >
+                Register
+              </Button>
             )}
             {isAuthenticated && <Tab>Inventory</Tab>}
             {isAuthenticated && <Tab>Add/Update</Tab>}

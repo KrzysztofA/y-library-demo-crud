@@ -15,6 +15,13 @@ public class UserController : ControllerBase
     public string Password { get; set; }
   }
 
+  public class FullUser
+  {
+    public string Email { get; set; }
+    public string Username { get; set; }
+    public string Password { get; set; }
+  }
+
   [HttpPost]
   public async Task<HttpResponseMessage> LoginUser( [FromBody] User user )
   {
@@ -23,9 +30,10 @@ public class UserController : ControllerBase
   }
 
   [HttpPost]
-  public async Task<HttpResponseMessage> AddUser( [FromBody] User user )
+  [Route( "new" )]
+  public async Task<HttpResponseMessage> AddUser( [FromBody] FullUser user )
   {
-    await _library.AddUser( user.Username, user.Password );
+    await _library.AddUser( user.Email, user.Username, user.Password );
     return new HttpResponseMessage( HttpStatusCode.Accepted );
   }
 }

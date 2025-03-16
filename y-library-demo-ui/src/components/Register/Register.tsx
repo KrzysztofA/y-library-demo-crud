@@ -9,9 +9,11 @@ import {
   ModalHeader,
   ModalOverlay,
 } from "@chakra-ui/react";
+import useRegistration from "../../hooks/useRegistration";
 import { useRef } from "react";
 
 const Register = ({ isOpen, onClose }: { isOpen: boolean; onClose: any }) => {
+  const addUser = useRegistration();
   const usernameRef = useRef<string>("");
   const emailRef = useRef<string>("");
   const passwordRef = useRef<string>("");
@@ -28,7 +30,15 @@ const Register = ({ isOpen, onClose }: { isOpen: boolean; onClose: any }) => {
     passwordRef.current = e.target.value;
   };
 
-  const register = (username: string, password: string) => {};
+  const register = async (
+    email: string,
+    username: string,
+    password: string
+  ) => {
+    if (await addUser(email, username, password)) {
+      onClose();
+    }
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
@@ -53,7 +63,13 @@ const Register = ({ isOpen, onClose }: { isOpen: boolean; onClose: any }) => {
           <Button
             colorScheme="blue"
             mr={3}
-            onClick={() => register(usernameRef.current, passwordRef.current)}
+            onClick={() =>
+              register(
+                emailRef.current,
+                usernameRef.current,
+                passwordRef.current
+              )
+            }
           >
             Register
           </Button>

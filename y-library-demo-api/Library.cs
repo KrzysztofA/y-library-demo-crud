@@ -26,13 +26,13 @@ public class Library
     return passwordIsCorrect;
   }
 
-  public async Task<bool> AddUser( string username, string password )
+  public async Task<bool> AddUser( string email, string username, string password )
   {
     var connectionString = ConnectionString;
     await using var dataSource = NpgsqlDataSource.Create(connectionString);
     await using var connection = await dataSource.OpenConnectionAsync();
     string hashedPassword = BCrypt.HashPassword(password);
-    string commandString = $"INSERT INTO \"public\".\"Users\" ( \"Username\", \"PasswordHash\" ) VALUES ( '{username}', '{hashedPassword}' );";
+    string commandString = $"INSERT INTO \"public\".\"Users\" ( \"Email\",\"Username\", \"PasswordHash\" ) VALUES ( '{email}', '{username}', '{hashedPassword}' );";
     await using var cmd = new NpgsqlCommand( commandString, connection).ExecuteReader();
     return true;
   }
