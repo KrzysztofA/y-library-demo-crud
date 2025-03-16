@@ -2,7 +2,8 @@ import { createContext } from "react";
 
 const AuthenticationContext = createContext({
   isAuthenticated: false,
-  authenticate: (username: string, password: string): boolean => false,
+  authenticate: async (username: string, password: string): Promise<boolean> =>
+    false,
   logout: () => {},
 });
 

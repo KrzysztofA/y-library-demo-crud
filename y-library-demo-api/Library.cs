@@ -19,7 +19,7 @@ public class Library
     var connectionString = ConnectionString;
     await using var dataSource = NpgsqlDataSource.Create(connectionString);
     await using var connection = await dataSource.OpenConnectionAsync();
-    await using var cmd = new NpgsqlCommand($"""SELECT "Users"."PasswordHash" FROM "public"."Users" WHERE "Users"."Username"={username};""", connection);
+    await using var cmd = new NpgsqlCommand($"""SELECT "Users"."PasswordHash" FROM "public"."Users" WHERE "Users"."Username"='{username}';""", connection);
     await using var reader = await cmd.ExecuteReaderAsync();
     reader.Read();
     var passwordIsCorrect = reader.GetString(0) == hashedPassword;

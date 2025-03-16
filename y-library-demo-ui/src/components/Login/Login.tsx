@@ -31,8 +31,8 @@ const Login = ({
     passwordRef.current = e.target.value;
   };
 
-  const login = (username: string, password: string) => {
-    if (authenticate(username, password)) {
+  const login = async (username: string, password: string) => {
+    if (await authenticate(username, password)) {
       onClose();
     }
   };
